@@ -2,6 +2,9 @@ name: Playwright tests
 on:
   repository_dispatch:
     types: [run-tests]
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -24,3 +27,30 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+  # download artifacts from the previous job and unzip them
+  download-artifacts:
+    needs: test
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    #install unzip
+    - name: Install unzip
+      run: choco install unzip
+      shell: powershell
+    - uses: actions/download-artifact@v2
+      with:
+        name: playwright-report
+    - name: Unzip report
+      run: unzip playwright-report.zip -d playwright-report
+    # - name: Get artifact ID
+    #   uses: actions/github-script@v4
+    #   id: artifact
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     script: |
+    #       const artifact = await github.actions.listWorkflowRunArtifacts({
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         run_id: context.runId,
+    #       });
+    #       return artifact.data.artifacts[0].id;
