@@ -1,0 +1,21 @@
+name: Repository Dispatch
+on:
+  repository_dispatch:
+    types: [test-event]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Print Hello World
+      run: echo Hello, world from repo 2!
+    
+    # - uses: peter-evans/repository-dispatch@v2
+    #   with:
+    #     token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+    #     repository: abdullahfarook/GithubActionsRepo2
+    #     event-type: test
+    #     client-payload: '{"branch": "play-wright-testing"}'
+  
