@@ -32,6 +32,5 @@ jobs:
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/playwright-report.zip`, Buffer.from(download.data));
 
       - name: 'Unzip artifact'
-        run: unzip playwright-report.zip
-      - name: 'List files'
-        run: ls -la
+      # unzip the artifact to folder playwright-report
+        run: unzip playwright-report.zip -d playwright-report
