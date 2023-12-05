@@ -32,16 +32,16 @@ jobs:
     needs: test
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    #install unzip
-    - name: Install unzip
-      run: choco install unzip
-      shell: powershell
+    # - uses: actions/checkout@v3
+    # #install unzip
+    # - name: Install unzip
+    #   run: choco install unzip
+    #   shell: powershell
     - uses: actions/download-artifact@v2
       with:
         name: playwright-report
     - name: List files
-      run: ls
+      run: ls -R
     # - name: Unzip report
     #   run: unzip playwright-report.zip -d playwright-report
     # - name: Get artifact ID
