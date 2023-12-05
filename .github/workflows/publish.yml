@@ -33,3 +33,5 @@ jobs:
 
       - name: 'Unzip artifact'
         run: unzip playwright-report.zip
+      - name: 'List files'
+        run: ls -la
