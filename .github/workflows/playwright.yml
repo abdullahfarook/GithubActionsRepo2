@@ -1,9 +1,8 @@
-name: Playwright Tests
+name: Playwright tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  repository_dispatch:
+    types: [run-tests]
+
 jobs:
   test:
     timeout-minutes: 60
