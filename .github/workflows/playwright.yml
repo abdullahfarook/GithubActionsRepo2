@@ -25,19 +25,3 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-    - name: Publish Report
-      uses: actions/github-script@v4
-      if: always()
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const artifact = await github.actions.createArtifact('playwright-report');
-          await github.actions.uploadArtifact({
-            artifact_id: artifact.id,
-            name: 'playwright-report',
-            retention_days: 30,
-            repository: context.repo.repo,
-            owner: context.repo.owner,
-            ref: 'playwright-report',
-            path: 'playwright-report/',
-          });
