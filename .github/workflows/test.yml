@@ -9,8 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
     - name: Print Hello World
-      run: echo Hello, world from repo 2!
+      run: echo Hello, world from repo 1!
+
+    - name: Print Branch Name
+      run: echo ${{ github.event.client_payload.branch }}
     
     # - uses: peter-evans/repository-dispatch@v2
     #   with:
