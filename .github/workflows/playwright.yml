@@ -27,22 +27,49 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-    #zip the report
-    - name: Zip report
-      run: zip -r playwright-report.zip playwright-report
-    # send report using  dawidd6/action-send-mail@v3
-    - name: Send report
+    # echo github uploaded artifact url and send it via email using davidd6/action-send-mail@v3
+    - name: Get artifact URL
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const artifact = await github.actions.listWorkflowRunArtifacts({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.runId,
+          });
+          return artifact.data.artifacts[0].archive_download_url;
+    #   id: artifact
+    # - name: Send email
+    #   uses: dawidd6/action-send-mail@v3
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{ secrets.MAIL_USERNAME }}
+    #     password: ${{ secrets.MAIL_PASSWORD }}
+    #     subject: Playwright report
+    #     body: |
+    #       Playwright report
+    #       ${{ steps.artifact.outputs.result }}
+    #     from: ${{ secrets.MAIL_USERNAME }}
+    #     to: ${{ secrets.MAIL_USERNAME }}
+    #     attachments: playwright-report/playwright-report.zip
+
+    # send uploaded artifact using  dawidd6/action-send-mail@v3
+    - name: Send email
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.office365.com
-        server_port: 587
+        server_address: smtp.gmail.com
+        server_port: 465
         username: ${{ secrets.MAIL_USERNAME }}
         password: ${{ secrets.MAIL_PASSWORD }}
         subject: Playwright report
-        body: Playwright report
+        body: |
+          Playwright report
         from: ${{ secrets.MAIL_USERNAME }}
         to: ${{ secrets.MAIL_USERNAME }}
-        attachments: playwright-report.zip
+        attachments: ${{ steps.artifact.outputs.artifact_url }}
+
   # download artifacts from the previous job and unzip them
   # publish:
   #   needs: test
@@ -60,9 +87,19 @@ jobs:
     #   shell: powershell
     # - name: Unzip report
     #   run: unzip playwright-report.zip -d playwright-report
-    # - name: Get artifact ID
+    - name: Get artifact ID
+      uses: actions/github-script@v4
+      id: artifact
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const artifact = await github.actions.listWorkflowRunArtifacts({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.runId,
+          });
+    # - name: Get artifact URL
     #   uses: actions/github-script@v4
-    #   id: artifact
     #   with:
     #     github-token: ${{ secrets.GITHUB_TOKEN }}
     #     script: |
@@ -71,4 +108,35 @@ jobs:
     #         repo: context.repo.repo,
     #         run_id: context.runId,
     #       });
+    #       return artifact.data.artifacts[0].archive_download_url;
+    #   id: artifact
+    # - name: Send email
+    #   uses: dawidd6/action-send-mail@v3
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{ secrets.MAIL_USERNAME }}
+    #     password: ${{ secrets.MAIL_PASSWORD }}
+    #     subject: Playwright report
+    #     body: |
+    #       Playwright report
+    #       ${{ steps.artifact.outputs.result }}
+    #     from: ${{ secrets.MAIL_USERNAME }}
+    #     to: ${{ secrets.MAIL_USERNAME }}
+    #     attachments: playwright-report/playwright-report.zip
+
+    # send uploaded artifact using  dawidd6/action-send-mail@v3
+    - name: Send email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        subject: Playwright report
+        body: |
+          Playwright report
+        from: ${{ secrets.MAIL_USERNAME }}
+        to: ${{ secrets.MAIL_USERNAME }}
+        attachments: ${{ steps.artifact.outputs.artifact_url }}
     #       return artifact.data.artifacts[0].id;
